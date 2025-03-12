@@ -1,13 +1,13 @@
 export default function FeatureCard({ icon: Icon, title, description }) {
   return (
-    <div className="relative bg-white p-6 rounded-lg shadow-md hover:shadow-lg transition-shadow">
-      <div className="absolute -top-4 left-4">
-        <div className="bg-[#20535F] rounded-full p-3">
+    <div className="relative p-6 rounded-lg transition-all duration-300 bg-slate-800/60 backdrop-blur-md hover:bg-slate-700/70 border border-emerald-900/20 hover:border-emerald-800/30 hover:shadow-xl hover:shadow-emerald-900/5 group h-full">
+      <div className="flex items-center mb-5">
+        <div className="bg-gradient-to-br from-emerald-400 to-teal-600 rounded-md p-3 mr-4 shadow-lg">
           <Icon className="h-6 w-6 text-white" />
         </div>
+        <h3 className="text-lg font-medium text-white transition-all duration-300">{title}</h3>
       </div>
-      <h3 className="mt-8 text-xl font-medium text-[#20535F]">{title}</h3>
-      <p className="mt-2 text-[#20535F]">{description}</p>
+      <p className="text-emerald-100/80 group-hover:text-emerald-100 transition-colors duration-300 font-light">{description}</p>
     </div>
   );
 }
