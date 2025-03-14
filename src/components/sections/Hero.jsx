@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ChevronDown } from 'lucide-react';
 import LoginForm from '../auth/LoginForm';
 import Button from '../ui/Button';
+import MetaBalls from '../animations/MetaBalls';
 
 export default function Hero() {
   const [isVisible, setIsVisible] = useState(false);
@@ -13,8 +14,8 @@ export default function Hero() {
     size: Math.random() * 15 + 5, // Entre 5 y 20px (tamaños más grandes)
     left: `${Math.random() * 100}%`,
     top: `${Math.random() * 100}%`,
-    duration: Math.random() * 20 + 15, // Entre 15 y 35 segundos
-    delay: Math.random() * 5,
+    duration: Math.random() * 10 + 10, // Reducido de 15-35 a 10-20 segundos
+    delay: Math.random() * 0.5, // Reducido de 2 a 0.5 segundos para aparecer casi inmediatamente
   }));
 
   useEffect(() => {
@@ -37,27 +38,43 @@ export default function Hero() {
     show: { opacity: 1, y: 0, transition: { duration: 0.8, ease: "easeOut" } }
   };
 
-  // Variante para animación de "typewriter" en texto destacado
-  const sentenceVariants = {
+  // Variantes para el título principal (palabra por palabra)
+  const titleContainer = {
     hidden: { opacity: 0 },
     visible: {
       opacity: 1,
       transition: {
-        staggerChildren: 0.08,
-        delayChildren: 0.5
+        staggerChildren: 0.18,
+        delayChildren: 0.1
       }
     }
   };
   
-  const letterVariants = {
-    hidden: { opacity: 0, y: 10 },
+  const wordVariants = {
+    hidden: { opacity: 0, y: 50 },
     visible: { 
       opacity: 1,
       y: 0,
       transition: {
         type: "spring",
-        stiffness: 100,
-        damping: 10
+        stiffness: 80,
+        damping: 15,
+        staggerChildren: 0.06,
+        duration: 1.2
+      }
+    }
+  };
+  
+  const charVariants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { 
+      opacity: 1,
+      y: 0,
+      transition: {
+        type: "spring",
+        stiffness: 80,
+        damping: 15,
+        duration: 0.8
       }
     }
   };
@@ -97,12 +114,30 @@ export default function Hero() {
     }
   };
 
+  const mainTitle = "Gestor de recursos humanos";
   const cloudText = "integrado en la nube";
+
+  const splitMainTitle = mainTitle.split(" ");
+  const splitCloudText = cloudText.split(" ");
 
   return (
     <div className="min-h-screen flex items-center justify-center overflow-hidden relative pt-20" id="home">
+      {/* Fondo con MetaBalls interactivas */}
+      <div className="absolute inset-0 z-0 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900">
+        <MetaBalls 
+          color="#0f9e64" 
+          cursorBallColor="#10B981" 
+          enableTransparency={true}
+          speed={0.25}
+          ballCount={12}
+          animationSize={40}
+          clumpFactor={0.8}
+          cursorBallSize={4}
+        />
+      </div>
+      
       <motion.div 
-        className="absolute inset-0 bg-gradient-to-b from-slate-900 via-slate-800 to-slate-900"
+        className="absolute inset-0 bg-gradient-to-b from-slate-900/50 via-slate-800/50 to-slate-900/50"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 1.5 }}
@@ -129,7 +164,7 @@ export default function Hero() {
               transition={{
                 duration: bubble.duration,
                 repeat: Infinity,
-                delay: bubble.delay,
+                delay: bubble.delay * 0.2, // Reducido de 0.5 a 0.2 para minimizar aún más el delay
                 ease: "linear"
               }}
             />
@@ -218,43 +253,69 @@ export default function Hero() {
           animate={isVisible ? "show" : "hidden"}
         >
           <motion.div variants={item} className="mx-auto max-w-5xl">
-            <motion.h1 
-              variants={item} 
-              className="text-5xl md:text-6xl lg:text-7xl font-medium text-white mb-6 leading-tight"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, ease: "easeOut" }}
-            >
-              <motion.span
-                initial={{ opacity: 0, filter: "blur(8px)" }}
-                animate={{ opacity: 1, filter: "blur(0px)" }}
-                transition={{ delay: 0.5, duration: 1.2 }}
-              >
-                Gestor de recursos humanos
-              </motion.span>
-            </motion.h1>
-            
-            <motion.h2 
-              className="text-5xl md:text-6xl lg:text-7xl font-medium text-white mb-16 leading-tight"
-              variants={sentenceVariants}
+            {/* Título principal con animación letra por letra usando Framer Motion */}
+            <motion.h1
+              className="text-4xl md:text-5xl lg:text-7xl font-semibold text-white mb-3 md:mb-6 leading-tight"
+              variants={titleContainer}
               initial="hidden"
               animate="visible"
             >
-              {cloudText.split("").map((char, index) => (
-                <motion.span key={index} variants={letterVariants} className={char === " " ? "mr-4" : ""}>
-                  {char}
+              {splitMainTitle.map((word, wordIndex) => (
+                <motion.span
+                  key={`word-${wordIndex}`}
+                  className="inline-block mr-4 md:mr-5"
+                  variants={wordVariants}
+                >
+                  {word.split("").map((char, charIndex) => (
+                    <motion.span
+                      key={`char-${wordIndex}-${charIndex}`}
+                      className="inline-block"
+                      variants={charVariants}
+                    >
+                      {char}
+                    </motion.span>
+                  ))}
+                </motion.span>
+              ))}
+            </motion.h1>
+            
+            {/* Subtítulo con animación letra por letra usando Framer Motion */}
+            <motion.h2
+              className="text-4xl md:text-5xl lg:text-7xl font-semibold text-white mb-10 md:mb-16 leading-tight"
+              variants={titleContainer}
+              initial="hidden"
+              animate="visible"
+              transition={{ delayChildren: 0.5 }}
+            >
+              {splitCloudText.map((word, wordIndex) => (
+                <motion.span
+                  key={`word-${wordIndex}`}
+                  className="inline-block mr-4 md:mr-5"
+                  variants={wordVariants}
+                  transition={{ delayChildren: 0.5 + (wordIndex * 0.1) }}
+                >
+                  {word.split("").map((char, charIndex) => (
+                    <motion.span
+                      key={`char-${wordIndex}-${charIndex}`}
+                      className="inline-block"
+                      variants={charVariants}
+                      transition={{ delay: 0.5 + (wordIndex * 0.1) + (charIndex * 0.04) }}
+                    >
+                      {char}
+                    </motion.span>
+                  ))}
                 </motion.span>
               ))}
             </motion.h2>
             
             <motion.div 
               variants={item}
-              className="mt-16"
+              className="mt-8 md:mt-16"
             >
               <motion.a 
                 href="#contactanos" 
                 onClick={(e) => handleScrollToSection(e, 'contactanos')}
-                className="inline-block text-slate-900 bg-emerald-400 hover:bg-emerald-300 px-10 py-4 rounded-md text-lg font-medium transition-all duration-300 tracking-wide shadow-md hover:shadow-lg hover:shadow-emerald-500/30"
+                className="inline-block text-slate-900 bg-emerald-400 hover:bg-emerald-300 px-8 md:px-10 py-3 md:py-4 rounded-md text-base md:text-lg font-medium transition-all duration-300 tracking-wide shadow-md hover:shadow-lg hover:shadow-emerald-500/30"
                 variants={buttonVariants}
                 initial="initial"
                 whileHover="hover"
